@@ -11,19 +11,29 @@ import android.os.Bundle;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.ClusterManager;
 
 public class MapsActivity extends FragmentActivity implements  OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener ,LocationListener {
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
+    private LocationRequest mLocationRequest;
+    private Marker marker;
+    private ClusterManager mClusterManager;
+    private LatLng[] posicoes = new LatLng[10];
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +43,16 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        posicoes[0] = new LatLng(-30,-56);
+        posicoes[1] = new LatLng(-30,-57);
+        posicoes[2] = new LatLng(-30,-60);
+        posicoes[3] = new LatLng(-30,-54);
+        posicoes[4] = new LatLng(-30,-35);
+        posicoes[5] = new LatLng(-30,-55);
+        posicoes[6] = new LatLng(-29,-23);
+        posicoes[7] = new LatLng(-29,-67);
+        posicoes[8] = new LatLng(-37,-64);
+        posicoes[9] = new LatLng(-38,-56);
     }
 
 
@@ -59,6 +79,19 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
                     .build();
                       mGoogleApiClient.connect();
         }
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mClusterManager = new ClusterManager<MyItem>(this, mMap);
+        for (LatLng posicao : posicoes){
+            MyItem offsetItem = new MyItem(posicao.latitude, posicao.longitude);
+            mClusterManager.addItem(offsetItem);
+        }
+
+        mMap.setOnCameraChangeListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+
     }
 
 
@@ -74,8 +107,19 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
         LatLng eu = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(eu).title("Estou aqui"));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(eu, 16));
+        if (marker == null)
+        marker = mMap.addMarker(new MarkerOptions().position(eu).title("Estou aqui"));
+        else
+           marker.setPosition(eu);
+
+   //     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(eu, 16));
+
+        for (LatLng posicao : posicoes){
+            MarkerOptions mOpt = new MarkerOptions();
+            mOpt.position(posicao);
+            mMap.addMarker(mOpt);
+        }
+
     }
 
 
@@ -85,4 +129,10 @@ public class MapsActivity extends FragmentActivity implements  OnMapReadyCallbac
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {}
 
+    @Override
+    public void onLocationChanged(Location location) {
+        LatLng newPos = new LatLng(location.getLatitude(), location.getLongitude());
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newPos, 16));
+
+    }
 }
