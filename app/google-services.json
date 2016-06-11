@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "283846333292",
+    "project_id": "cursopos-9b9da"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:283846333292:android:4f84955d664d3f4c",
+        "android_client_info": {
+          "package_name": "culik.com.facelogin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "283846333292-0jhonk439vsvomc3t9vdhtdjv4a7t32s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "culik.com.facelogin",
+            "certificate_hash": "0EFA81455715B28C333AA72C203C028054F684CC"
+          }
+        },
+        {
+          "client_id": "283846333292-vpdqi05cekvccqnhef42p4e4im4mtgku.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD48GcJEiueO63C3DEJpYB9oodTd8VGSIY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
